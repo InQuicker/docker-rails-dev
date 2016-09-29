@@ -1,50 +1,51 @@
 FROM ruby:2.3-alpine
 
-RUN apk add --no-cache \
-  build-base \
-  postgresql-dev \
-  git \
-  bash \
-  nodejs \
-  libxml2-dev libxslt-dev \
-  linux-headers \
-  && rm -rf /var/cache/apk/*
+# mariadb-dev is a big package (226MB). It is required to compile mysql2 gem
 
-RUN curl -Ls https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2 \
-  | tar xjC /
+RUN apk update && \
+  apk upgrade && \
+  apk add --no-cache \
+    bash \
+    build-base \
+    ca-certificates \
+    curl \
+    curl-dev \
+    geoip-dev \
+    git \
+    libxml2 \
+    linux-headers \
+    mariadb-dev \
+    mariadb-client \
+    nodejs \
+    ruby-dev \
+    tzdata \
+    wget \
+  && rm -rf /var/cache/apk/* \
+  && update-ca-certificates
 
-  # zcat phantomjs-1.9.8-linux-x86_64.tar.bz2 | tar -xzf - && \
-  # cp phantomjs-1.9.8-linux-x86_64/bin/phantomjs /usr/local/bin/ && \
-  # rm -r phantomjs-1.9.8-linux-x86_64 phantomjs-1.9.8-linux-x86_64.tar.bz2
+ARG phantom_file=phantomjs-2.1.1-linux-x86_64
+RUN wget -q https://bitbucket.org/ariya/phantomjs/downloads/${phantom_file}.tar.bz2 && \
+  tar -xjf ${phantom_file}.tar.bz2 && \
+  cp $phantom_file/bin/phantomjs /usr/local/bin && \
+  rm -rf ${phantom_file} ${phantom_file}.tar.bz2
 
-RUN curl -LOs http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz && \
-  gunzip GeoLiteCity.dat.gz && \
+ARG geolite_file=GeoLiteCity.dat.gz
+RUN wget -q http://geolite.maxmind.com/download/geoip/database/${geolite_file} && \
+  gunzip ${geolite_file} && \
   mkdir -p /usr/share/GeoIP/ && \
   mv GeoLiteCity.dat /usr/share/GeoIP/GeoIPCity.dat
 
-ENV APP=/app
+ENV APP=/iqapp
 ENV DOCKER=true
 RUN mkdir -p $APP
+# Need to set /iqapp to read write so the sync tool can work
+RUN chmod a+rw $APP
 WORKDIR $APP
 
-ENV BUNDLE_GEMFILE=/app/Gemfile \
+ENV BUNDLE_GEMFILE=${APP}/Gemfile \
   BUNDLE_JOBS=8 \
   BUNDLE_PATH=/bundle
-
 
 RUN gem install bundler \
     && bundle config build.nokogiri --use-system-libraries
 
-# COPY Gemfile Gemfile.lock ./
-# RUN bundle install \
-    # && echo "Bundle install complete"
-
-# RUN RAILS_ENV=production bundle install --without development test --no-color --path /opt/app
-# COPY . $APP
-
-ENV PORT=3000
-
-EXPOSE $PORT
-
-ENTRYPOINT ["bundle", "exec"]
-CMD ["rails", "server", "-b", "0.0.0.0"]
