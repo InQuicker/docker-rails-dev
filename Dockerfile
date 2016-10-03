@@ -12,6 +12,7 @@ RUN apk update && \
     curl-dev \
     geoip-dev \
     git \
+    grep \
     libxml2 \
     linux-headers \
     mariadb-dev \
