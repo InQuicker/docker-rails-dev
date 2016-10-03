@@ -47,6 +47,4 @@ ENV BUNDLE_GEMFILE=${APP}/Gemfile \
   BUNDLE_JOBS=8 \
   BUNDLE_PATH=/bundle
 
-RUN gem install bundler \
-    && bundle config build.nokogiri --use-system-libraries
-
+RUN gem install bundler
