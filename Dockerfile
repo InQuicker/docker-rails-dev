@@ -1,34 +1,23 @@
-FROM ruby:2.3-alpine
+FROM ruby:2.3
 
-# mariadb-dev is a big package (226MB). It is required to compile mysql2 gem
-
-RUN apk update && \
-  apk upgrade && \
-  apk add --no-cache \
-    bash \
-    build-base \
-    ca-certificates \
-    curl \
-    curl-dev \
-    geoip-dev \
-    git \
-    grep \
-    libxml2 \
-    linux-headers \
-    mariadb-dev \
-    mariadb-client \
+RUN apt-get update && \
+  apt-get upgrade -y && \
+  apt-get install -y \
     nodejs \
-    ruby-dev \
-    tzdata \
-    wget \
-  && rm -rf /var/cache/apk/* \
-  && update-ca-certificates
+    git \
+    build-essential \
+    chrpath \
+    libssl-dev  \
+    libxft-dev \
+    libfontconfig1 \
+    libfontconfig1-dev
 
-ARG phantom_file=phantomjs-2.1.1-linux-x86_64
-RUN wget -q https://bitbucket.org/ariya/phantomjs/downloads/${phantom_file}.tar.bz2 && \
-  tar -xjf ${phantom_file}.tar.bz2 && \
-  cp $phantom_file/bin/phantomjs /usr/local/bin && \
-  rm -rf ${phantom_file} ${phantom_file}.tar.bz2
+ARG PHANTOM_FILE=phantomjs-2.1.1-linux-x86_64
+RUN wget https://bitbucket.org/ariya/phantomjs/downloads/${PHANTOM_FILE}.tar.bz2
+RUN tar -xvjf ${PHANTOM_FILE}.tar.bz2 && \
+  mv ${PHANTOM_FILE} /usr/local/share && \
+  rm ${PHANTOM_FILE}.tar.bz2 && \
+  ln -sf /usr/local/share/${PHANTOM_FILE}/bin/phantomjs /usr/local/bin
 
 ARG geolite_file=GeoLiteCity.dat.gz
 RUN wget -q http://geolite.maxmind.com/download/geoip/database/${geolite_file} && \
