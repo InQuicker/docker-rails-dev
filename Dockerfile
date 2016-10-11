@@ -10,7 +10,8 @@ RUN apt-get update && \
     libssl-dev  \
     libxft-dev \
     libfontconfig1 \
-    libfontconfig1-dev
+    libfontconfig1-dev \
+    mysql-client
 
 ARG PHANTOM_FILE=phantomjs-2.1.1-linux-x86_64
 RUN wget https://bitbucket.org/ariya/phantomjs/downloads/${PHANTOM_FILE}.tar.bz2
