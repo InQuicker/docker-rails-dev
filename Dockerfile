@@ -26,6 +26,10 @@ RUN wget -q http://geolite.maxmind.com/download/geoip/database/${geolite_file} &
   mkdir -p /usr/share/GeoIP/ && \
   mv GeoLiteCity.dat /usr/share/GeoIP/GeoIPCity.dat
 
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
+  apt-get install nodejs && \
+  apt-get autoremove -y
+
 ENV APP=/iqapp
 ENV DOCKER=true
 RUN mkdir -p $APP
