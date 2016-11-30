@@ -3,15 +3,17 @@ FROM ruby:2.3
 RUN apt-get update && \
   apt-get upgrade -y && \
   apt-get install -y \
-    nodejs \
-    git \
     build-essential \
     chrpath \
-    libssl-dev  \
-    libxft-dev \
+    git \
+    less \
     libfontconfig1 \
     libfontconfig1-dev \
-    mysql-client
+    libssl-dev  \
+    libxft-dev \
+    mysql-client \
+    nodejs \
+    vim-tiny
 
 ARG PHANTOM_FILE=phantomjs-2.1.1-linux-x86_64
 RUN wget https://bitbucket.org/ariya/phantomjs/downloads/${PHANTOM_FILE}.tar.bz2
@@ -29,6 +31,8 @@ RUN wget -q http://geolite.maxmind.com/download/geoip/database/${geolite_file} &
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
   apt-get install nodejs && \
   apt-get autoremove -y
+
+COPY files/logrotate /etc/logrotate.d/rails
 
 ENV APP=/iqapp
 ENV DOCKER=true
