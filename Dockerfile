@@ -32,6 +32,9 @@ RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
   apt-get install nodejs && \
   apt-get autoremove -y
 
+RUN npm install -g bower && \
+   echo '{ "allow_root": true }' > /root/.bowerrc
+
 COPY files/logrotate /etc/logrotate.d/rails
 
 ENV APP=/iqapp
