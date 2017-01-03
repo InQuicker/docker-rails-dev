@@ -12,7 +12,6 @@ RUN apt-get update && \
     libssl-dev  \
     libxft-dev \
     mysql-client \
-    nodejs \
     vim-tiny
 
 ARG PHANTOM_FILE=phantomjs-2.1.1-linux-x86_64
@@ -34,6 +33,7 @@ RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
 
 RUN npm install -g bower && \
    echo '{ "allow_root": true }' > /root/.bowerrc
+RUN npm install -g aglio
 
 COPY files/logrotate /etc/logrotate.d/rails
 
