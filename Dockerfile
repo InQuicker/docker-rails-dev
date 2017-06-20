@@ -48,4 +48,4 @@ ENV BUNDLE_GEMFILE=${APP}/Gemfile \
   BUNDLE_JOBS=8 \
   BUNDLE_PATH=/bundle
 
-RUN gem install bundler
+RUN gem install bundler -v 1.15.1
